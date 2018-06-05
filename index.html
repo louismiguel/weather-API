@@ -1,0 +1,70 @@
+<!doctype html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Weather API</title>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/css/bootstrap.css"
+    />
+
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="container text-center">
+            <h1 class="text-center" id="local">location</h1>
+
+            <h2 id="temperatura"> </h2>
+            <p id="icon"></p>
+            <button class="btn btn-dafault" id="toggle">change temperature!</button>
+        </div>
+    </div>
+
+    <!-- JQUERY CALL API WEATHER @luislota -->
+    <script>
+        // global
+        var cel = false;
+        var wd;
+        function displayTemp(temp, c) {
+            if (c) return Math.round((temp - 32) * (5 / 9)) + "F";
+            return Math.round(temp) + "C";
+        }
+        function render(wd, cel) {
+            var currentLocation = wd.name;
+            var currentWeather = wd.weather[0].description;
+            var currentTemp = displayTemp(wd.main.temp, cel);
+            var high = displayTemp(wd.main.temp_max, cel);
+            var low = displayTemp(wd.main.temp_min, cel);
+            $("#local").html(currentLocation);
+            $("#temperatura").html(currentTemp);
+        }
+
+        $(function () {
+            var loc;
+            $.getJSON('https://ipinfo.io', function (d) {
+                loc = d.loc.split(",");
+
+
+                $.getJSON(
+                    'https://fcc-weather-api.glitch.me/api/current?units=imperial&lat=' +
+                    loc[0] + '&lon=' + loc[1], function (apiData) {
+                        wd = apiData;
+                        var iconTemp = wd.weather[0].icon;
+                        $('#icon').prepend('<img src=' + iconTemp + ' >')
+                        render(apiData, cel);
+
+                        $("#toggle").click(function () {
+                            cel = !cel;
+                            render(wd, cel);
+                        });
+                    })
+            });
+        })
+       </script>
+         <!--JQUERY CALL API WEATHER @luislota -->
+         
+   
+</body>
+
+</html>
